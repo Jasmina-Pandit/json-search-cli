@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/fatih/structs"
+	"json-search-cli/helper"
 	"json-search-cli/model"
 	"json-search-cli/reader"
 	"reflect"
-	"strings"
 )
 
 type UserSearch struct {
@@ -71,17 +71,20 @@ func (u *UserSearch) searchUser(key string, value string){
 	users:=loadUser()
 	for _,user:= range users {
 		u := reflect.ValueOf(user)
-		v:= u.FieldByName(strings.ToLower(key))
+		v:= helper.CaseAndUnderscoreInsenstiveFieldByName(u, key)
 		if fmt.Sprint(v) == value{
 			printPretty(user)
-			return
 		}
 
 	}
 }
 
 func printPretty(user model.User){
-	fmt.Println("User:", user)
+	u := reflect.ValueOf(user)
+	fmt.Println("USER")
+	for _,key:= range structs.Names(&model.User{}){
+		fmt.Println(key,":",helper.CaseAndUnderscoreInsenstiveFieldByName(u,key))
+	}
 }
 
 func (u *UserSearch) Run(args []string) int{
