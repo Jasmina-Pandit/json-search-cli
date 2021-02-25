@@ -8,6 +8,7 @@ import (
 	"json-search-cli/model"
 	"json-search-cli/reader"
 	"reflect"
+	"strings"
 )
 
 type UserSearch struct {
@@ -72,11 +73,25 @@ func (u *UserSearch) searchUser(key string, value string){
 	for _,user:= range users {
 		u := reflect.ValueOf(user)
 		v:= helper.CaseAndUnderscoreInsenstiveFieldByName(u, key)
-		if fmt.Sprint(v) == value{
+		if fmt.Sprint(v) == value || checkArrayValues(fmt.Sprint(v), value){
 			printPretty(user)
 		}
 
 	}
+}
+
+func checkArrayValues(value string, lookupValue string) bool{
+	value= strings.TrimPrefix(value, "[")
+	value =strings.TrimSuffix(value, "]")
+	splitStrs:= strings.Fields(value)
+	for _, a := range splitStrs {
+		if a == lookupValue {
+			return true
+		}
+	}
+	return false
+
+
 }
 
 func printPretty(user model.User){
