@@ -1,0 +1,96 @@
+package cmd
+
+import (
+	"github.com/stretchr/testify/require"
+	"json-search-cli/model"
+	"testing"
+)
+
+func Test_OrgSearch(t *testing.T) {
+
+	tests := map[string]struct {
+		thenAssert       func(orgs []model.Organisation, err error)
+		givenKey         string
+		givenSearchValue string
+	}{
+		"should successfully search small case id": {
+			givenKey:         "id",
+			givenSearchValue: "102",
+			thenAssert: func(orgs []model.Organisation, err error) {
+				require.Nil(t, err)
+				require.NotNil(t, orgs)
+				require.Len(t, orgs, 1)
+			},
+		},
+		"should successfully search upper case id": {
+			givenKey:         "ID",
+			givenSearchValue: "102",
+			thenAssert: func(orgs []model.Organisation, err error) {
+				require.Nil(t, err)
+				require.NotNil(t, orgs)
+				require.Len(t, orgs, 1)
+			},
+		},
+		"should successfully search underscore id": {
+			givenKey:         "_id",
+			givenSearchValue: "102",
+			thenAssert: func(orgs []model.Organisation, err error) {
+				require.Nil(t, err)
+				require.NotNil(t, orgs)
+				require.Len(t, orgs, 1)
+			},
+		},
+		"should successfully search by external_id": {
+			givenKey:         "external_id",
+			givenSearchValue: "12ab34",
+			thenAssert: func(orgs []model.Organisation, err error) {
+				require.Nil(t, err)
+				require.NotNil(t, orgs)
+				require.Len(t, orgs, 1)
+			},
+		},
+		"should successfully search by externalid without underscore": {
+			givenKey:         "externalid",
+			givenSearchValue: "12ab34",
+			thenAssert: func(orgs []model.Organisation, err error) {
+				require.Nil(t, err)
+				require.NotNil(t, orgs)
+				require.Len(t, orgs, 1)
+			},
+		},
+		"should successfully search for value in array fields": {
+			givenKey:         "domain_names",
+			givenSearchValue: "trollery.com",
+			thenAssert: func(orgs []model.Organisation, err error) {
+				require.Nil(t, err)
+				require.NotNil(t, orgs)
+				require.Len(t, orgs, 1)
+			},
+		},
+		"should successfully search for value with spaces": {
+			givenKey:         "details",
+			givenSearchValue: "Non profit",
+			thenAssert: func(orgs []model.Organisation, err error) {
+				require.Nil(t, err)
+				require.NotNil(t, orgs)
+				require.Len(t, orgs, 1)
+			},
+		},
+		"should not error on missing fields": {
+			givenKey:         "newkey",
+			givenSearchValue: "hello",
+			thenAssert: func(orgs []model.Organisation, err error) {
+				require.NotNil(t, err)
+				require.Error(t, err, "invalid key. Use help command for list of valid keys")
+
+			},
+		},
+	}
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			orgsearch := NewOrgSearch("testdata/org_test.json")
+			result, err := orgsearch.searchOrg(test.givenKey, test.givenSearchValue)
+			test.thenAssert(result, err)
+		})
+	}
+}

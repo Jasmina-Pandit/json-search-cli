@@ -14,13 +14,13 @@ func main() {
 
 	c.Commands = map[string]cli.CommandFactory{
 		"search-user": func() (cli.Command, error) {
-			return cmd.NewUserSearch(), nil
+			return cmd.NewUserSearch("ref-data/users.json"), nil
 		},
 		"search-org": func() (cli.Command, error) {
-			return cmd.NewOrgSearch(), nil
+			return cmd.NewOrgSearch("ref-data/organizations.json"), nil
 		},
 		"search-tkt": func() (cli.Command, error) {
-			return cmd.NewTicketSearch(), nil
+			return cmd.NewTicketSearch("ref-data/organizations.json"), nil
 		},
 	}
 	status, err := c.Run()

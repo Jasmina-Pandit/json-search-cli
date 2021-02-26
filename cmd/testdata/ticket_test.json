@@ -1,0 +1,48 @@
+[
+  {
+    "_id": "50f3fdbd-f8a6-481d-9bf7-572972856628",
+    "url": "http://initech.zendesk.com/api/v2/tickets/50f3fdbd-f8a6-481d-9bf7-572972856628.json",
+    "external_id": "12ab34",
+    "created_at": "2016-05-19T08:52:06 -10:00",
+    "type": "incident",
+    "subject": "A Nuisance in Namibia",
+    "description": "Cillum laboris ad ex reprehenderit dolor velit tempor ea id ut veniam. Excepteur sunt ullamco qui est laboris veniam ut commodo tempor ea laborum.",
+    "priority": "normal",
+    "status": "pending",
+    "submitter_id": 66,
+    "assignee_id": 12,
+    "organization_id": 125,
+    "tags": [
+      "Maine",
+      "West Virginia",
+      "Michigan",
+      "Florida"
+    ],
+    "has_incidents": false,
+    "due_at": "2016-08-01T11:48:58 -10:00",
+    "via": "voice"
+  },
+  {
+    "_id": "50dfc8bc-31de-411e-92bf-a6d6b9dfa490",
+    "url": "http://initech.zendesk.com/api/v2/tickets/50dfc8bc-31de-411e-92bf-a6d6b9dfa490.json",
+    "external_id": "8bc8bee7-2d98-4b69-b4a9-4f348ff41fa3",
+    "created_at": "2016-03-08T09:44:54 -11:00",
+    "type": "task",
+    "subject": "A Problem in South Africa",
+    "description": "Esse nisi occaecat pariatur veniam culpa dolore anim elit aliquip. Cupidatat mollit nulla consectetur ullamco tempor esse.",
+    "priority": "high",
+    "status": "hold",
+    "submitter_id": 43,
+    "assignee_id": 54,
+    "organization_id": 103,
+    "tags": [
+      "Georgia",
+      "Tennessee",
+      "Mississippi",
+      "Marshall Islands"
+    ],
+    "has_incidents": true,
+    "due_at": "2016-08-03T09:17:37 -10:00",
+    "via": "voice"
+  }
+]
