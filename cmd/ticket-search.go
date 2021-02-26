@@ -12,14 +12,19 @@ import (
 )
 
 type TicketSearch struct {
-	tickets []model.Ticket
-	tktKeys []string
+	tickets         []model.Ticket
+	tktKeys         []string
+	keysOfTypeArray []string
 }
 
 func NewTicketSearch(fileName string) *TicketSearch {
+	var keysOfTypeArray []string
+	keysOfTypeArray = append(keysOfTypeArray, "tags")
+
 	return &TicketSearch{
-		tickets: loadTickets(fileName),
-		tktKeys: structs.Names(&model.Ticket{}),
+		tickets:         loadTickets(fileName),
+		tktKeys:         structs.Names(&model.Ticket{}),
+		keysOfTypeArray: keysOfTypeArray,
 	}
 }
 func loadTickets(fileName string) []model.Ticket {
@@ -44,7 +49,7 @@ func (t *TicketSearch) searchTicket(key string, value string) ([]model.Ticket, e
 	for _, tkt := range t.tickets {
 		u := reflect.ValueOf(tkt)
 		v := helper.CaseAndUnderscoreInsenstiveFieldByName(u, key)
-		if fmt.Sprint(v) == value || helper.CheckTrimmedValueInArrayString(fmt.Sprint(v), value) {
+		if fmt.Sprint(v) == value || helper.CheckTrimmedValueInArrayString(key, t.keysOfTypeArray, v, value) {
 			t.printPretty(tkt)
 			result = append(result, tkt)
 		}

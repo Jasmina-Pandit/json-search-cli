@@ -12,14 +12,18 @@ import (
 )
 
 type OrgSearch struct {
-	orgs    []model.Organisation
-	orgKeys []string
+	orgs            []model.Organisation
+	orgKeys         []string
+	keysOfTypeArray []string
 }
 
 func NewOrgSearch(fileName string) *OrgSearch {
+	var keysOfTypeArray []string
+	keysOfTypeArray = append(append(keysOfTypeArray, "tags"), "domainnames")
 	return &OrgSearch{
-		orgs:    loadOrgs(fileName),
-		orgKeys: structs.Names(&model.Organisation{}),
+		orgs:            loadOrgs(fileName),
+		orgKeys:         structs.Names(&model.Organisation{}),
+		keysOfTypeArray: keysOfTypeArray,
 	}
 }
 func loadOrgs(fileName string) []model.Organisation {
@@ -45,7 +49,7 @@ func (o *OrgSearch) searchOrg(key string, value string) ([]model.Organisation, e
 	for _, org := range o.orgs {
 		u := reflect.ValueOf(org)
 		v := helper.CaseAndUnderscoreInsenstiveFieldByName(u, key)
-		if fmt.Sprint(v) == value || helper.CheckTrimmedValueInArrayString(fmt.Sprint(v), value) {
+		if fmt.Sprint(v) == value || helper.CheckTrimmedValueInArrayString(key, o.keysOfTypeArray, v, value) {
 			o.printPretty(org)
 			result = append(result, org)
 		}

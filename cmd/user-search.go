@@ -12,14 +12,18 @@ import (
 )
 
 type UserSearch struct {
-	users    []model.User
-	userKeys []string
+	users           []model.User
+	userKeys        []string
+	keysOfTypeArray []string
 }
 
 func NewUserSearch(fileName string) *UserSearch {
+	var keysOfTypeArray []string
+	keysOfTypeArray = append(keysOfTypeArray, "tags")
 	return &UserSearch{
-		users:    loadUser(fileName),
-		userKeys: structs.Names(&model.User{}),
+		users:           loadUser(fileName),
+		userKeys:        structs.Names(&model.User{}),
+		keysOfTypeArray: keysOfTypeArray,
 	}
 }
 func loadUser(fileName string) []model.User {
@@ -84,7 +88,7 @@ func (u *UserSearch) searchUser(key string, value string) ([]model.User, error) 
 		ru := reflect.ValueOf(user)
 		v := helper.CaseAndUnderscoreInsenstiveFieldByName(ru, key)
 
-		if fmt.Sprint(v) == value || helper.CheckTrimmedValueInArrayString(fmt.Sprint(v), value) {
+		if fmt.Sprint(v) == value || helper.CheckTrimmedValueInArrayString(key, u.keysOfTypeArray, v, value) {
 			u.printPretty(user)
 			result = append(result, user)
 		}

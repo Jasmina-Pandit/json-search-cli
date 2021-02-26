@@ -11,14 +11,15 @@ func CaseAndUnderscoreInsenstiveFieldByName(v reflect.Value, name string) reflec
 	return v.FieldByNameFunc(func(n string) bool { return strings.ToLower(n) == name })
 }
 
-func CheckTrimmedValueInArrayString(value string, lookupValue string) bool {
-	value = strings.TrimPrefix(value, "[")
-	value = strings.TrimSuffix(value, "]")
-	splitStrs := strings.Fields(value)
-	for _, a := range splitStrs {
-		if a == lookupValue {
-			return true
+func CheckTrimmedValueInArrayString(key string, keysOfTypeArr []string, value reflect.Value, lookupValue string) bool {
+	if IsCaseAndUnderscoreInsenKeyInArray(keysOfTypeArr, key) {
+		arr := value.Interface().([]string)
+		for _, a := range arr {
+			if a == lookupValue {
+				return true
+			}
 		}
+		return false
 	}
 	return false
 }

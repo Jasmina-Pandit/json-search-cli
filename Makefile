@@ -8,3 +8,5 @@ run:
 
 format:
 	go fmt .
+test:
+	go test -cover -v ./cmd/... ./reader/...
