@@ -163,6 +163,7 @@ func Test_UserSearch(t *testing.T) {
 	for testName, test := range tests {
 		t.Run(testName, func(t *testing.T) {
 			userSearch := NewUserSearch("testdata/user_test.json", "testdata/org_test.json")
+			userSearch.Initialise()
 			result, err := userSearch.searchUser(test.givenKey, test.givenSearchValue)
 			test.thenAssert(result, err)
 		})

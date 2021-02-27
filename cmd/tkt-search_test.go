@@ -162,6 +162,7 @@ func Test_TicketSearch(t *testing.T) {
 	for testName, test := range tests {
 		t.Run(testName, func(t *testing.T) {
 			tktsearch := NewTicketSearch("testdata/ticket_test.json", "testdata/user_test.json", "testdata/org_test.json")
+			tktsearch.Initialise()
 			result, err := tktsearch.searchTicket(test.givenKey, test.givenSearchValue)
 			test.thenAssert(result, err)
 		})

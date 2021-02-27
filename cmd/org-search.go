@@ -16,15 +16,12 @@ type OrgSearch struct {
 	orgs            []model.Organisation
 	orgKeys         []string
 	keysOfTypeArray []string
+	orgfileName     string
 }
 
 func NewOrgSearch(fileName string) *OrgSearch {
-	var keysOfTypeArray []string
-	keysOfTypeArray = append(append(keysOfTypeArray, "tags"), "domainnames")
 	return &OrgSearch{
-		orgs:            loadOrgs(fileName),
-		orgKeys:         structs.Names(&model.Organisation{}),
-		keysOfTypeArray: keysOfTypeArray,
+		orgfileName: fileName,
 	}
 }
 func loadOrgs(fileName string) []model.Organisation {
@@ -65,12 +62,25 @@ func (o *OrgSearch) printPretty(orgs model.Organisation) {
 	}
 }
 
-func (u *OrgSearch) Run(args []string) int {
-	u.searchOrg(args[0], args[1])
+func (o *OrgSearch) Run(args []string) int {
+	if len(args) < 2 {
+		return -18511 //return help as per cli doco
+	}
+	o.Initialise()
+	o.searchOrg(args[0], args[1])
+
 	return 0
 }
-func (h *OrgSearch) Synopsis() string {
-	return h.Help()
+
+func (o *OrgSearch) Initialise() {
+	o.orgs = loadOrgs(o.orgfileName)
+	o.orgKeys = structs.Names(&model.Organisation{})
+	o.keysOfTypeArray = append(append(o.keysOfTypeArray, "tags"), "domainnames")
+
+}
+
+func (o *OrgSearch) Synopsis() string {
+	return o.Help()
 }
 
 func (*OrgSearch) Help() string {

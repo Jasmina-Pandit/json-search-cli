@@ -19,17 +19,15 @@ type UserSearch struct {
 	userKeys        []string
 	keysOfTypeArray []string
 	orgSearch       *OrgSearch
+	orgFileName     string
+	userFileName    string
 }
 
 func NewUserSearch(userFileName string, orgFileName string) *UserSearch {
-	var keysOfTypeArray []string
-	keysOfTypeArray = append(keysOfTypeArray, "tags")
-	orgSearch := NewOrgSearch(orgFileName)
 	return &UserSearch{
-		users:           loadUser(userFileName),
-		userKeys:        structs.Names(&model.User{}),
-		keysOfTypeArray: keysOfTypeArray,
-		orgSearch:       orgSearch,
+		userFileName: userFileName,
+		userKeys:     structs.Names(&model.User{}),
+		orgFileName:  orgFileName,
 	}
 }
 func loadUser(fileName string) []model.User {
@@ -123,11 +121,24 @@ func (u *UserSearch) printPretty(user model.User) {
 }
 
 func (u *UserSearch) Run(args []string) int {
+	if len(args) < 2 {
+		return -18511 //return help as per cli doco
+	}
+	u.Initialise()
 	u.searchUser(args[0], args[1])
 	return 0
 }
-func (h *UserSearch) Synopsis() string {
-	return h.Help()
+
+func (u *UserSearch) Initialise() {
+	u.orgSearch = NewOrgSearch(u.orgFileName)
+	u.orgSearch.Initialise()
+	u.users = loadUser(u.userFileName)
+	u.keysOfTypeArray = append(u.keysOfTypeArray, "tags")
+
+}
+
+func (u *UserSearch) Synopsis() string {
+	return u.Help()
 }
 
 func (*UserSearch) Help() string {

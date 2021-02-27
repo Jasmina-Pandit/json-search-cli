@@ -143,6 +143,7 @@ func Test_OrgSearch(t *testing.T) {
 	for testName, test := range tests {
 		t.Run(testName, func(t *testing.T) {
 			orgsearch := NewOrgSearch("testdata/org_test.json")
+			orgsearch.Initialise()
 			result, err := orgsearch.searchOrg(test.givenKey, test.givenSearchValue)
 			test.thenAssert(result, err)
 		})

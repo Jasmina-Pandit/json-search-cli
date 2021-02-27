@@ -20,19 +20,18 @@ type TicketSearch struct {
 	keysOfTypeArray []string
 	userSearch      *UserSearch
 	orgSearch       *OrgSearch
+	userFileName    string
+	orgFileName     string
+	tktFileName     string
 }
 
 func NewTicketSearch(tktFileName string, userFileName string, orgFileName string) *TicketSearch {
-	var keysOfTypeArray []string
-	keysOfTypeArray = append(keysOfTypeArray, "tags")
-	userSearch := NewUserSearch(userFileName, orgFileName)
-	orgSearch := NewOrgSearch(orgFileName)
+
 	return &TicketSearch{
-		tickets:         loadTickets(tktFileName),
-		tktKeys:         structs.Names(&model.Ticket{}),
-		keysOfTypeArray: keysOfTypeArray,
-		userSearch:      userSearch,
-		orgSearch:       orgSearch,
+		tktKeys:      structs.Names(&model.Ticket{}),
+		userFileName: userFileName,
+		orgFileName:  orgFileName,
+		tktFileName:  tktFileName,
 	}
 }
 func loadTickets(fileName string) []model.Ticket {
@@ -92,11 +91,25 @@ func (t *TicketSearch) printPretty(tktModel model.Ticket) {
 }
 
 func (t *TicketSearch) Run(args []string) int {
+	if len(args) < 2 {
+		return -18511 //return help as per cli doco
+	}
+	t.Initialise()
 	t.searchTicket(args[0], args[1])
+
 	return 0
 }
-func (h *TicketSearch) Synopsis() string {
-	return h.Help()
+func (t *TicketSearch) Initialise() {
+	t.userSearch = NewUserSearch(t.userFileName, t.orgFileName)
+	t.userSearch.Initialise()
+	t.orgSearch = NewOrgSearch(t.orgFileName)
+	t.orgSearch.Initialise()
+	t.tickets = loadTickets(t.tktFileName)
+	t.keysOfTypeArray = append(t.keysOfTypeArray, "tags")
+}
+
+func (t *TicketSearch) Synopsis() string {
+	return t.Help()
 }
 
 func (*TicketSearch) Help() string {
