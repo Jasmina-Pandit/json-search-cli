@@ -43,9 +43,6 @@ func loadUser(fileName string) []model.User {
 	return users
 }
 
-func (*UserSearch) Help() string {
-	return "hello"
-}
 func (*UserSearch) Run1(args []string) int {
 	users := loadUser("ref-data/users.json")
 	userKeys := structs.Names(&model.User{})
@@ -131,4 +128,10 @@ func (u *UserSearch) Run(args []string) int {
 }
 func (h *UserSearch) Synopsis() string {
 	return h.Help()
+}
+
+func (*UserSearch) Help() string {
+	return "\tSearch User and its organisation using the search key and field. Key and value are case and underscore agnostic \n" +
+		"\t\t\tSyntax search-user <key> <value>  \n" +
+		"\t\t\te.g: search-tkt id 1"
 }

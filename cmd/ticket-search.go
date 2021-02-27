@@ -45,9 +45,6 @@ func loadTickets(fileName string) []model.Ticket {
 	}
 	return tkts
 }
-func (*TicketSearch) Help() string {
-	return "hello"
-}
 
 func (t *TicketSearch) searchTicket(key string, value string) (*model.Response, error) {
 	var result []model.Ticket
@@ -100,4 +97,10 @@ func (t *TicketSearch) Run(args []string) int {
 }
 func (h *TicketSearch) Synopsis() string {
 	return h.Help()
+}
+
+func (*TicketSearch) Help() string {
+	return "\tSearch Ticket and it assigned user and organisation using the search key and field. Key and value are case and underscore agnostic \n" +
+		"\t\t\tSyntax search-tkt <key> <value>  \n" +
+		"\t\t\te.g: search-tkt id 1"
 }

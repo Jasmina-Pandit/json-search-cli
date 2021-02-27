@@ -37,9 +37,6 @@ func loadOrgs(fileName string) []model.Organisation {
 	}
 	return orgs
 }
-func (*OrgSearch) Help() string {
-	return "hello"
-}
 
 func (o *OrgSearch) searchOrg(key string, value string) (*model.Response, error) {
 	var result []model.Organisation
@@ -74,4 +71,10 @@ func (u *OrgSearch) Run(args []string) int {
 }
 func (h *OrgSearch) Synopsis() string {
 	return h.Help()
+}
+
+func (*OrgSearch) Help() string {
+	return "\tSearch Organisation using the search key and field. Key and value are case and underscore agnostic \n" +
+		"\t\t\tSyntax search-org <key> <value>  \n" +
+		"\t\t\te.g: search-org id 1"
 }
