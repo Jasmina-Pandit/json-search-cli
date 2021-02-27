@@ -23,15 +23,13 @@ Search keys are case insensitive also underscores are ignored, e.g id, ID, _id a
 
 ###### Steps
 - 1 Build
-    go build .
+    go build search.go
 
 - 2 Help command
 ```bash
-go run search.go help
-
-go run search.go -help
-
-go run search.go
+./search help
+OR
+./search
 
     search-org          Search Organisation using the search key and field. Key and value are case and underscore agnostic
                         Syntax search-org <key> <value>
@@ -46,7 +44,7 @@ go run search.go
 ```
 - 3 Run search commands
 ```bash
-go run search.go <search-cmd> <key> <value>
+./search <search-cmd> <key> <value>
 ```
 
 #### Run Tests
@@ -56,11 +54,29 @@ make test
 ```
 ___
 
+###Docker Run
+1. Builder docker image
+   docker build -t search-app .
+2. Run help
+   ```bash
+   docker run search-app ./search help
+   ```
+3. Search entity
+   ```bash
+      docker run search-app ./search <command> <key> <value>
+   ```
+   Example:
+   ```bash
+         docker run search-app ./search search-user id 1
+         docker run search-app ./search search-org id 101
+         docker run search-app ./search search-tkt id xxx-xxxx-xxx
+      ```
+
 #### Examples
 
 ###### search-user <key> <value>
 ````bash
-json-search-cli:>search-user _id 1
+json-search-cli:>./search search-user _id 1
 [ {
   "_id" : "1",
   "shared" : "false",
@@ -96,7 +112,7 @@ json-search-cli:>search-user _id 1
 
 - ###### search-org <key> <value>
 ````bash
-json-search-cli:>search-org _id 101
+json-search-cli:>./search search-org _id 101
 [ {
   "_id" : "101",
   "shared_tickets" : "false",
@@ -112,10 +128,10 @@ json-search-cli:>search-org _id 101
 
 - ###### search-ticket <key> <value>
 ````bash
-json-search-cli:>ticket-search _id 436bf9b0-1147-4c0a-8439-6f79833bff5b
+json-search-cli:>./search ticket-search _id xxx-xxxx-xxx
 [ {
-      "_id": "436bf9b0-1147-4c0a-8439-6f79833bff5b",
-      "url": "http://initech.zendesk.com/api/v2/tickets/436bf9b0-1147-4c0a-8439-6f79833bff5b.json",
+      "_id": "xxx-xxxx-xxx",
+      "url": "http://xx.xxx.com",
       "external_id": "9210cdc9-4bee-485f-a078-35396cd74063",
       "created_at": "2016-04-28T11:19:34 -10:00",
       "type": "incident",
