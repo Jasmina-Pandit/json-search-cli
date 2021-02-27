@@ -9,14 +9,15 @@ import (
 func Test_TicketSearch(t *testing.T) {
 
 	tests := map[string]struct {
-		thenAssert       func(tkts []model.Ticket, err error)
+		thenAssert       func(response *model.Response, err error)
 		givenKey         string
 		givenSearchValue string
 	}{
 		"should successfully search small case id": {
 			givenKey:         "id",
 			givenSearchValue: "50f3fdbd-f8a6-481d-9bf7-572972856628",
-			thenAssert: func(tkts []model.Ticket, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				tkts := response.Tickets
 				require.Nil(t, err)
 				require.NotNil(t, tkts)
 				require.Len(t, tkts, 1)
@@ -26,7 +27,8 @@ func Test_TicketSearch(t *testing.T) {
 		"should successfully search upper case id": {
 			givenKey:         "ID",
 			givenSearchValue: "50f3fdbd-f8a6-481d-9bf7-572972856628",
-			thenAssert: func(tkts []model.Ticket, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				tkts := response.Tickets
 				require.Nil(t, err)
 				require.NotNil(t, tkts)
 				require.Len(t, tkts, 1)
@@ -36,7 +38,8 @@ func Test_TicketSearch(t *testing.T) {
 		"should successfully search underscore id": {
 			givenKey:         "_id",
 			givenSearchValue: "50f3fdbd-f8a6-481d-9bf7-572972856628",
-			thenAssert: func(tkts []model.Ticket, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				tkts := response.Tickets
 				require.Nil(t, err)
 				require.NotNil(t, tkts)
 				require.Len(t, tkts, 1)
@@ -46,7 +49,8 @@ func Test_TicketSearch(t *testing.T) {
 		"should successfully search by external_id": {
 			givenKey:         "external_id",
 			givenSearchValue: "12ab34",
-			thenAssert: func(tkts []model.Ticket, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				tkts := response.Tickets
 				require.Nil(t, err)
 				require.NotNil(t, tkts)
 				require.Len(t, tkts, 1)
@@ -56,7 +60,8 @@ func Test_TicketSearch(t *testing.T) {
 		"should successfully search by externalid without underscore": {
 			givenKey:         "externalid",
 			givenSearchValue: "12ab34",
-			thenAssert: func(tkts []model.Ticket, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				tkts := response.Tickets
 				require.Nil(t, err)
 				require.NotNil(t, tkts)
 				require.Len(t, tkts, 1)
@@ -66,7 +71,8 @@ func Test_TicketSearch(t *testing.T) {
 		"should successfully search for value in array fields": {
 			givenKey:         "tags",
 			givenSearchValue: "Marshall Islands",
-			thenAssert: func(tkts []model.Ticket, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				tkts := response.Tickets
 				require.Nil(t, err)
 				require.NotNil(t, tkts)
 				require.Len(t, tkts, 1)
@@ -75,7 +81,8 @@ func Test_TicketSearch(t *testing.T) {
 		"should successfully search for value with spaces": {
 			givenKey:         "subject",
 			givenSearchValue: "A Problem in South Africa",
-			thenAssert: func(tkts []model.Ticket, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				tkts := response.Tickets
 				require.Nil(t, err)
 				require.NotNil(t, tkts)
 				require.Len(t, tkts, 1)
@@ -85,52 +92,76 @@ func Test_TicketSearch(t *testing.T) {
 		"should not error on missing fields": {
 			givenKey:         "newkey",
 			givenSearchValue: "hello",
-			thenAssert: func(tkts []model.Ticket, err error) {
+			thenAssert: func(response *model.Response, err error) {
 				require.NotNil(t, err)
 				require.Error(t, err, "invalid key. Use help command for list of valid keys")
 
 			},
 		},
-		"should return user for case insensitive searches - all lower": {
+		"should return ticket for case insensitive searches - all lower": {
 			givenKey:         "priority",
 			givenSearchValue: "high",
-			thenAssert: func(tkts []model.Ticket, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				tkts := response.Tickets
 				require.Nil(t, err)
 				require.Len(t, tkts, 1)
 				require.Equal(t, tkts[0].Priority, "high")
 			},
 		},
-		"should return user for case insensitive searches - all upper": {
+		"should return ticket for case insensitive searches - all upper": {
 			givenKey:         "priority",
 			givenSearchValue: "HIGH",
-			thenAssert: func(tkts []model.Ticket, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				tkts := response.Tickets
 				require.Nil(t, err)
 				require.Len(t, tkts, 1)
 				require.Equal(t, tkts[0].Priority, "high")
 			},
 		},
-		"should return user for case insensitive searches -mixed": {
+		"should return ticket for case insensitive searches -mixed": {
 			givenKey:         "priority",
 			givenSearchValue: "HiGh",
-			thenAssert: func(tkts []model.Ticket, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				tkts := response.Tickets
 				require.Nil(t, err)
 				require.Len(t, tkts, 1)
 				require.Equal(t, tkts[0].Priority, "high")
 			},
 		},
-		"should return user for case insensitive searches in array fields - all lower": {
+		"should return ticket for case insensitive searches in array fields - all lower": {
 			givenKey:         "tags",
 			givenSearchValue: "georgia",
-			thenAssert: func(tkts []model.Ticket, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				tkts := response.Tickets
 				require.Nil(t, err)
 				require.Len(t, tkts, 1)
 				require.Equal(t, tkts[0].Tags[0], "Georgia")
 			},
 		},
+		"should return assigned user and related organisation for the ticket": {
+			givenKey:         "ID",
+			givenSearchValue: "50f3fdbd-f8a6-481d-9bf7-572972856628",
+			thenAssert: func(response *model.Response, err error) {
+				tkts := response.Tickets
+				require.Nil(t, err)
+				require.Len(t, tkts, 1)
+				require.Equal(t, tkts[0].ID, "50f3fdbd-f8a6-481d-9bf7-572972856628")
+				require.Equal(t, tkts[0].AssigneeID, 1)
+				require.Equal(t, tkts[0].OrganizationID, 101)
+
+				users := response.Users
+				require.Len(t, users, 1)
+				require.Equal(t, users[0].Id, 1)
+
+				orgs := response.Orgs
+				require.Len(t, orgs, 1)
+				require.Equal(t, orgs[0].ID, 101)
+			},
+		},
 	}
 	for testName, test := range tests {
 		t.Run(testName, func(t *testing.T) {
-			tktsearch := NewTicketSearch("testdata/ticket_test.json")
+			tktsearch := NewTicketSearch("testdata/ticket_test.json", "testdata/user_test.json", "testdata/org_test.json")
 			result, err := tktsearch.searchTicket(test.givenKey, test.givenSearchValue)
 			test.thenAssert(result, err)
 		})

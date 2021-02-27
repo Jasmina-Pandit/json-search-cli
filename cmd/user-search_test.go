@@ -9,14 +9,15 @@ import (
 func Test_UserSearch(t *testing.T) {
 
 	tests := map[string]struct {
-		thenAssert       func(users []model.User, err error)
+		thenAssert       func(response *model.Response, err error)
 		givenKey         string
 		givenSearchValue string
 	}{
 		"should successfully search small case id": {
 			givenKey:         "id",
 			givenSearchValue: "1",
-			thenAssert: func(users []model.User, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				users := response.Users
 				require.Nil(t, err)
 				require.NotNil(t, users)
 				require.Len(t, users, 1)
@@ -26,7 +27,8 @@ func Test_UserSearch(t *testing.T) {
 		"should successfully search upper case id": {
 			givenKey:         "ID",
 			givenSearchValue: "1",
-			thenAssert: func(users []model.User, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				users := response.Users
 				require.Nil(t, err)
 				require.NotNil(t, users)
 				require.Len(t, users, 1)
@@ -36,7 +38,8 @@ func Test_UserSearch(t *testing.T) {
 		"should successfully search underscore id": {
 			givenKey:         "_id",
 			givenSearchValue: "1",
-			thenAssert: func(users []model.User, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				users := response.Users
 				require.Nil(t, err)
 				require.NotNil(t, users)
 				require.Len(t, users, 1)
@@ -46,7 +49,8 @@ func Test_UserSearch(t *testing.T) {
 		"should successfully search by external_id": {
 			givenKey:         "external_id",
 			givenSearchValue: "12ab34",
-			thenAssert: func(users []model.User, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				users := response.Users
 				require.Nil(t, err)
 				require.NotNil(t, users)
 				require.Len(t, users, 1)
@@ -56,7 +60,8 @@ func Test_UserSearch(t *testing.T) {
 		"should successfully search by externalid without underscore": {
 			givenKey:         "externalid",
 			givenSearchValue: "12ab34",
-			thenAssert: func(users []model.User, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				users := response.Users
 				require.Nil(t, err)
 				require.NotNil(t, users)
 				require.Len(t, users, 1)
@@ -66,7 +71,8 @@ func Test_UserSearch(t *testing.T) {
 		"should successfully search for value in array fields": {
 			givenKey:         "tags",
 			givenSearchValue: "Springville",
-			thenAssert: func(users []model.User, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				users := response.Users
 				require.Nil(t, err)
 				require.NotNil(t, users)
 				require.Len(t, users, 2)
@@ -75,7 +81,8 @@ func Test_UserSearch(t *testing.T) {
 		"should successfully search for value with spaces": {
 			givenKey:         "signature",
 			givenSearchValue: "Don't Worry Be Happy!",
-			thenAssert: func(users []model.User, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				users := response.Users
 				require.Nil(t, err)
 				require.NotNil(t, users)
 				require.Len(t, users, 2)
@@ -84,7 +91,7 @@ func Test_UserSearch(t *testing.T) {
 		"should not error on missing fields": {
 			givenKey:         "newkey",
 			givenSearchValue: "hello",
-			thenAssert: func(users []model.User, err error) {
+			thenAssert: func(response *model.Response, err error) {
 				require.NotNil(t, err)
 				require.Error(t, err, "invalid key. Use help command for list of valid keys")
 
@@ -93,7 +100,8 @@ func Test_UserSearch(t *testing.T) {
 		"should return user for empty searches": {
 			givenKey:         "alias",
 			givenSearchValue: "",
-			thenAssert: func(users []model.User, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				users := response.Users
 				require.Nil(t, err)
 				require.Len(t, users, 1)
 			},
@@ -101,7 +109,8 @@ func Test_UserSearch(t *testing.T) {
 		"should return user for case insensitive searches - all lower": {
 			givenKey:         "locale",
 			givenSearchValue: "zh-cn",
-			thenAssert: func(users []model.User, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				users := response.Users
 				require.Nil(t, err)
 				require.Len(t, users, 1)
 				require.Equal(t, users[0].Locale, "zh-CN")
@@ -110,7 +119,8 @@ func Test_UserSearch(t *testing.T) {
 		"should return user for case insensitive searches - all upper": {
 			givenKey:         "locale",
 			givenSearchValue: "ZH-CN",
-			thenAssert: func(users []model.User, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				users := response.Users
 				require.Nil(t, err)
 				require.Len(t, users, 1)
 				require.Equal(t, users[0].Locale, "zh-CN")
@@ -119,7 +129,8 @@ func Test_UserSearch(t *testing.T) {
 		"should return user for case insensitive searches - mixed": {
 			givenKey:         "locale",
 			givenSearchValue: "Zh-cN",
-			thenAssert: func(users []model.User, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				users := response.Users
 				require.Nil(t, err)
 				require.Len(t, users, 1)
 				require.Equal(t, users[0].Locale, "zh-CN")
@@ -128,15 +139,30 @@ func Test_UserSearch(t *testing.T) {
 		"should return user for case insensitive searches in array fields - all lower": {
 			givenKey:         "tags",
 			givenSearchValue: "springville",
-			thenAssert: func(users []model.User, err error) {
+			thenAssert: func(response *model.Response, err error) {
+				users := response.Users
 				require.Nil(t, err)
 				require.Len(t, users, 2)
+			},
+		},
+		"should return related organisation for the user": {
+			givenKey:         "ID",
+			givenSearchValue: "1",
+			thenAssert: func(response *model.Response, err error) {
+				users := response.Users
+				require.Len(t, users, 1)
+				require.Equal(t, users[0].Id, 1)
+				require.Equal(t, users[0].OrganizationID, 101)
+
+				orgs := response.Orgs
+				require.Len(t, orgs, 1)
+				require.Equal(t, orgs[0].ID, 101)
 			},
 		},
 	}
 	for testName, test := range tests {
 		t.Run(testName, func(t *testing.T) {
-			userSearch := NewUserSearch("testdata/user_test.json")
+			userSearch := NewUserSearch("testdata/user_test.json", "testdata/org_test.json")
 			result, err := userSearch.searchUser(test.givenKey, test.givenSearchValue)
 			test.thenAssert(result, err)
 		})

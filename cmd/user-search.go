@@ -5,10 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/fatih/structs"
+	"github.com/sirupsen/logrus"
 	"json-search-cli/helper"
 	"json-search-cli/model"
 	"json-search-cli/reader"
 	"reflect"
+	"strconv"
 	"strings"
 )
 
@@ -16,15 +18,18 @@ type UserSearch struct {
 	users           []model.User
 	userKeys        []string
 	keysOfTypeArray []string
+	orgSearch       *OrgSearch
 }
 
-func NewUserSearch(fileName string) *UserSearch {
+func NewUserSearch(userFileName string, orgFileName string) *UserSearch {
 	var keysOfTypeArray []string
 	keysOfTypeArray = append(keysOfTypeArray, "tags")
+	orgSearch := NewOrgSearch(orgFileName)
 	return &UserSearch{
-		users:           loadUser(fileName),
+		users:           loadUser(userFileName),
 		userKeys:        structs.Names(&model.User{}),
 		keysOfTypeArray: keysOfTypeArray,
+		orgSearch:       orgSearch,
 	}
 }
 func loadUser(fileName string) []model.User {
@@ -80,29 +85,41 @@ func (*UserSearch) Run1(args []string) int {
 }
 
 //search user by key and value in user.json
-func (u *UserSearch) searchUser(key string, value string) ([]model.User, error) {
+func (u *UserSearch) searchUser(key string, value string) (*model.Response, error) {
 
 	//validate key
 	if !helper.IsCaseAndUnderscoreInsenKeyInArray(u.userKeys, key) {
 		return nil, errors.New("invalid key. Use help command for list of valid keys")
 	}
+	userResult := []model.User{}
+	orgResult := []model.Organisation{}
 
-	result := []model.User{}
 	for _, user := range u.users {
 		ru := reflect.ValueOf(user)
 		v := helper.CaseAndUnderscoreInsenstiveFieldByName(ru, key)
 
 		if strings.ToLower(fmt.Sprint(v)) == strings.ToLower(value) || helper.CheckTrimmedValueInArrayString(key, u.keysOfTypeArray, v, value) {
 			u.printPretty(user)
-			result = append(result, user)
+			response, err := u.orgSearch.searchOrg("ID", strconv.Itoa(user.OrganizationID))
+			if err != nil {
+				logrus.WithField("User ID", user.Id).WithField("Org ID", user.OrganizationID).WithError(err).Error("Failed to fetch organisation for user")
+			} else if response == nil || len(response.Orgs) == 0 {
+				logrus.WithField("User ID", user.Id).WithField("Org ID", user.OrganizationID).Warn("No organisation found for user")
+			} else {
+				orgResult = append(orgResult, response.Orgs...)
+			}
+
+			userResult = append(userResult, user)
 		}
 	}
-	return result, nil
+	response := model.Response{Users: userResult, Orgs: orgResult}
+	return &response, nil
 }
 
 func (u *UserSearch) printPretty(user model.User) {
 	ru := reflect.ValueOf(user)
 	fmt.Println("USER")
+
 	for _, key := range u.userKeys {
 		fmt.Println(key, ":", helper.CaseAndUnderscoreInsenstiveFieldByName(ru, key))
 	}

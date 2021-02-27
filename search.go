@@ -7,6 +7,12 @@ import (
 	"os"
 )
 
+const (
+	orgFileName    = "ref-data/organizations.json"
+	userFileName   = "ref-data/users.json"
+	ticketFileName = "ref-data/organizations.json"
+)
+
 func main() {
 
 	c := cli.NewCLI("json-search-cli", "0.0.1")
@@ -14,13 +20,13 @@ func main() {
 
 	c.Commands = map[string]cli.CommandFactory{
 		"search-user": func() (cli.Command, error) {
-			return cmd.NewUserSearch("ref-data/users.json"), nil
+			return cmd.NewUserSearch(userFileName, orgFileName), nil
 		},
 		"search-org": func() (cli.Command, error) {
-			return cmd.NewOrgSearch("ref-data/organizations.json"), nil
+			return cmd.NewOrgSearch(orgFileName), nil
 		},
 		"search-tkt": func() (cli.Command, error) {
-			return cmd.NewTicketSearch("ref-data/organizations.json"), nil
+			return cmd.NewTicketSearch(ticketFileName, userFileName, orgFileName), nil
 		},
 	}
 	status, err := c.Run()

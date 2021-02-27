@@ -41,7 +41,7 @@ func (*OrgSearch) Help() string {
 	return "hello"
 }
 
-func (o *OrgSearch) searchOrg(key string, value string) ([]model.Organisation, error) {
+func (o *OrgSearch) searchOrg(key string, value string) (*model.Response, error) {
 	var result []model.Organisation
 	if !helper.IsCaseAndUnderscoreInsenKeyInArray(o.orgKeys, key) {
 		return nil, errors.New("invalid key. Use help command for list of valid keys")
@@ -56,7 +56,8 @@ func (o *OrgSearch) searchOrg(key string, value string) ([]model.Organisation, e
 		}
 
 	}
-	return result, nil
+	response := model.Response{Orgs: result}
+	return &response, nil
 }
 
 func (o *OrgSearch) printPretty(orgs model.Organisation) {
