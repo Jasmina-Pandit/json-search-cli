@@ -20,6 +20,7 @@ func Test_UserSearch(t *testing.T) {
 				require.Nil(t, err)
 				require.NotNil(t, users)
 				require.Len(t, users, 1)
+				require.Equal(t, users[0].Id, 1)
 			},
 		},
 		"should successfully search upper case id": {
@@ -29,6 +30,7 @@ func Test_UserSearch(t *testing.T) {
 				require.Nil(t, err)
 				require.NotNil(t, users)
 				require.Len(t, users, 1)
+				require.Equal(t, users[0].Id, 1)
 			},
 		},
 		"should successfully search underscore id": {
@@ -38,6 +40,7 @@ func Test_UserSearch(t *testing.T) {
 				require.Nil(t, err)
 				require.NotNil(t, users)
 				require.Len(t, users, 1)
+				require.Equal(t, users[0].Id, 1)
 			},
 		},
 		"should successfully search by external_id": {
@@ -47,6 +50,7 @@ func Test_UserSearch(t *testing.T) {
 				require.Nil(t, err)
 				require.NotNil(t, users)
 				require.Len(t, users, 1)
+				require.Equal(t, users[0].ExternalID, "12ab34")
 			},
 		},
 		"should successfully search by externalid without underscore": {
@@ -56,6 +60,7 @@ func Test_UserSearch(t *testing.T) {
 				require.Nil(t, err)
 				require.NotNil(t, users)
 				require.Len(t, users, 1)
+				require.Equal(t, users[0].ExternalID, "12ab34")
 			},
 		},
 		"should successfully search for value in array fields": {
@@ -91,6 +96,41 @@ func Test_UserSearch(t *testing.T) {
 			thenAssert: func(users []model.User, err error) {
 				require.Nil(t, err)
 				require.Len(t, users, 1)
+			},
+		},
+		"should return user for case insensitive searches - all lower": {
+			givenKey:         "locale",
+			givenSearchValue: "zh-cn",
+			thenAssert: func(users []model.User, err error) {
+				require.Nil(t, err)
+				require.Len(t, users, 1)
+				require.Equal(t, users[0].Locale, "zh-CN")
+			},
+		},
+		"should return user for case insensitive searches - all upper": {
+			givenKey:         "locale",
+			givenSearchValue: "ZH-CN",
+			thenAssert: func(users []model.User, err error) {
+				require.Nil(t, err)
+				require.Len(t, users, 1)
+				require.Equal(t, users[0].Locale, "zh-CN")
+			},
+		},
+		"should return user for case insensitive searches - mixed": {
+			givenKey:         "locale",
+			givenSearchValue: "Zh-cN",
+			thenAssert: func(users []model.User, err error) {
+				require.Nil(t, err)
+				require.Len(t, users, 1)
+				require.Equal(t, users[0].Locale, "zh-CN")
+			},
+		},
+		"should return user for case insensitive searches in array fields - all lower": {
+			givenKey:         "tags",
+			givenSearchValue: "springville",
+			thenAssert: func(users []model.User, err error) {
+				require.Nil(t, err)
+				require.Len(t, users, 2)
 			},
 		},
 	}

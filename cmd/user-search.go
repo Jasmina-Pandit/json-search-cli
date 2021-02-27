@@ -9,6 +9,7 @@ import (
 	"json-search-cli/model"
 	"json-search-cli/reader"
 	"reflect"
+	"strings"
 )
 
 type UserSearch struct {
@@ -78,7 +79,10 @@ func (*UserSearch) Run1(args []string) int {
 	return 0
 }
 
+//search user by key and value in user.json
 func (u *UserSearch) searchUser(key string, value string) ([]model.User, error) {
+
+	//validate key
 	if !helper.IsCaseAndUnderscoreInsenKeyInArray(u.userKeys, key) {
 		return nil, errors.New("invalid key. Use help command for list of valid keys")
 	}
@@ -88,7 +92,7 @@ func (u *UserSearch) searchUser(key string, value string) ([]model.User, error) 
 		ru := reflect.ValueOf(user)
 		v := helper.CaseAndUnderscoreInsenstiveFieldByName(ru, key)
 
-		if fmt.Sprint(v) == value || helper.CheckTrimmedValueInArrayString(key, u.keysOfTypeArray, v, value) {
+		if strings.ToLower(fmt.Sprint(v)) == strings.ToLower(value) || helper.CheckTrimmedValueInArrayString(key, u.keysOfTypeArray, v, value) {
 			u.printPretty(user)
 			result = append(result, user)
 		}

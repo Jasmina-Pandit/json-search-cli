@@ -20,6 +20,7 @@ func Test_OrgSearch(t *testing.T) {
 				require.Nil(t, err)
 				require.NotNil(t, orgs)
 				require.Len(t, orgs, 1)
+				require.Equal(t, orgs[0].ID, 102)
 			},
 		},
 		"should successfully search upper case id": {
@@ -29,6 +30,7 @@ func Test_OrgSearch(t *testing.T) {
 				require.Nil(t, err)
 				require.NotNil(t, orgs)
 				require.Len(t, orgs, 1)
+				require.Equal(t, orgs[0].ID, 102)
 			},
 		},
 		"should successfully search underscore id": {
@@ -38,6 +40,7 @@ func Test_OrgSearch(t *testing.T) {
 				require.Nil(t, err)
 				require.NotNil(t, orgs)
 				require.Len(t, orgs, 1)
+				require.Equal(t, orgs[0].ID, 102)
 			},
 		},
 		"should successfully search by external_id": {
@@ -47,6 +50,7 @@ func Test_OrgSearch(t *testing.T) {
 				require.Nil(t, err)
 				require.NotNil(t, orgs)
 				require.Len(t, orgs, 1)
+				require.Equal(t, orgs[0].ID, 102)
 			},
 		},
 		"should successfully search by externalid without underscore": {
@@ -56,6 +60,7 @@ func Test_OrgSearch(t *testing.T) {
 				require.Nil(t, err)
 				require.NotNil(t, orgs)
 				require.Len(t, orgs, 1)
+				require.Equal(t, orgs[0].ExternalID, "12ab34")
 			},
 		},
 		"should successfully search for value in array fields": {
@@ -74,6 +79,8 @@ func Test_OrgSearch(t *testing.T) {
 				require.Nil(t, err)
 				require.NotNil(t, orgs)
 				require.Len(t, orgs, 1)
+				require.Equal(t, orgs[0].Details, "Non profit")
+
 			},
 		},
 		"should not error on missing fields": {
@@ -83,6 +90,42 @@ func Test_OrgSearch(t *testing.T) {
 				require.NotNil(t, err)
 				require.Error(t, err, "invalid key. Use help command for list of valid keys")
 
+			},
+		},
+		"should return user for case insensitive searches - all lower": {
+			givenKey:         "name",
+			givenSearchValue: "nutralab",
+			thenAssert: func(orgs []model.Organisation, err error) {
+				require.Nil(t, err)
+				require.Len(t, orgs, 1)
+				require.Equal(t, orgs[0].Name, "Nutralab")
+			},
+		},
+		"should return user for case insensitive searches - all upper": {
+			givenKey:         "name",
+			givenSearchValue: "NUTRALAB",
+			thenAssert: func(orgs []model.Organisation, err error) {
+				require.Nil(t, err)
+				require.Len(t, orgs, 1)
+				require.Equal(t, orgs[0].Name, "Nutralab")
+			},
+		},
+		"should return user for case insensitive searches - mixed": {
+			givenKey:         "name",
+			givenSearchValue: "nutrAlaB",
+			thenAssert: func(orgs []model.Organisation, err error) {
+				require.Nil(t, err)
+				require.Len(t, orgs, 1)
+				require.Equal(t, orgs[0].Name, "Nutralab")
+			},
+		},
+		"should return user for case insensitive searches in array fields - all lower": {
+			givenKey:         "tags",
+			givenSearchValue: "cherry",
+			thenAssert: func(orgs []model.Organisation, err error) {
+				require.Nil(t, err)
+				require.Len(t, orgs, 1)
+				require.Equal(t, orgs[0].Tags[0], "Cherry")
 			},
 		},
 	}

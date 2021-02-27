@@ -9,6 +9,7 @@ import (
 	"json-search-cli/model"
 	"json-search-cli/reader"
 	"reflect"
+	"strings"
 )
 
 type OrgSearch struct {
@@ -49,7 +50,7 @@ func (o *OrgSearch) searchOrg(key string, value string) ([]model.Organisation, e
 	for _, org := range o.orgs {
 		u := reflect.ValueOf(org)
 		v := helper.CaseAndUnderscoreInsenstiveFieldByName(u, key)
-		if fmt.Sprint(v) == value || helper.CheckTrimmedValueInArrayString(key, o.keysOfTypeArray, v, value) {
+		if strings.ToLower(fmt.Sprint(v)) == strings.ToLower(value) || helper.CheckTrimmedValueInArrayString(key, o.keysOfTypeArray, v, value) {
 			o.printPretty(org)
 			result = append(result, org)
 		}

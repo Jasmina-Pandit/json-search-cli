@@ -4,7 +4,7 @@ SHELL:=$(shell /usr/bin/env which bash)
 APPNAME = json-search-cli
 
 run:
-	go run .
+	go run . ${type} ${key} ${value}
 
 format:
 	go fmt .

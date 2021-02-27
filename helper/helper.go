@@ -15,7 +15,7 @@ func CheckTrimmedValueInArrayString(key string, keysOfTypeArr []string, value re
 	if IsCaseAndUnderscoreInsenKeyInArray(keysOfTypeArr, key) {
 		arr := value.Interface().([]string)
 		for _, a := range arr {
-			if a == lookupValue {
+			if strings.ToLower(a) == strings.ToLower(lookupValue) {
 				return true
 			}
 		}

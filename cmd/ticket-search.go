@@ -9,6 +9,7 @@ import (
 	"json-search-cli/model"
 	"json-search-cli/reader"
 	"reflect"
+	"strings"
 )
 
 type TicketSearch struct {
@@ -49,7 +50,7 @@ func (t *TicketSearch) searchTicket(key string, value string) ([]model.Ticket, e
 	for _, tkt := range t.tickets {
 		u := reflect.ValueOf(tkt)
 		v := helper.CaseAndUnderscoreInsenstiveFieldByName(u, key)
-		if fmt.Sprint(v) == value || helper.CheckTrimmedValueInArrayString(key, t.keysOfTypeArray, v, value) {
+		if strings.ToLower(fmt.Sprint(v)) == strings.ToLower(value) || helper.CheckTrimmedValueInArrayString(key, t.keysOfTypeArray, v, value) {
 			t.printPretty(tkt)
 			result = append(result, tkt)
 		}
