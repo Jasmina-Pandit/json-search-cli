@@ -159,3 +159,11 @@ json-search-cli:>./search ticket-search _id xxx-xxxx-xxx
 - Take JSON files as input to the application
 - making use of a map data structure for faster search
 - Add tabular output format
+
+
+#### How to walk through the code
+1. ref-data directory contains the provided json files
+2. model directory contains the struct implementation for the ref-data jsons
+3. search.go is the main function, it use a cli library and initialises user, organisation and ticket search commands
+4. cmd directory contains the 3 search implementations with their test files
+5. reader directory contains json reading code

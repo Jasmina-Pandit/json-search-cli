@@ -41,44 +41,6 @@ func loadUser(fileName string) []model.User {
 	return users
 }
 
-func (*UserSearch) Run1(args []string) int {
-	users := loadUser("ref-data/users.json")
-	userKeys := structs.Names(&model.User{})
-	userMap := make(map[string]map[string][]model.User)
-
-	for _, user := range users {
-		u := reflect.ValueOf(user)
-
-		for _, key := range userKeys {
-			if _, found := userMap[key]; !found {
-				valueMap := make(map[string][]model.User)
-				var userSlice []model.User
-				userSlice = append(userSlice, user)
-				valueMap[(u.FieldByName(key).Interface().(string))] = userSlice
-				userMap[key] = valueMap
-			} else {
-				valueMap := userMap[key]
-				valueKey := u.FieldByName(key).Interface().(string)
-				if _, found := valueMap[valueKey]; !found {
-					userSlice := valueMap[valueKey]
-					userSlice = append(userSlice, user)
-					valueMap[(u.FieldByName(key).Interface().(string))] = userSlice
-					userMap[key] = valueMap
-				} else {
-					var userSlice []model.User
-					userSlice = append(userSlice, user)
-					valueMap[(u.FieldByName(key).Interface().(string))] = userSlice
-					userMap[key] = valueMap
-				}
-			}
-
-		}
-
-	}
-	fmt.Println(userMap)
-	return 0
-}
-
 //search user by key and value in user.json
 func (u *UserSearch) searchUser(key string, value string) (*model.Response, error) {
 
