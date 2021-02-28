@@ -149,3 +149,59 @@ func Test_OrgSearch(t *testing.T) {
 		})
 	}
 }
+
+func Test_OrgCommands(t *testing.T) {
+	tests := map[string]struct {
+		thenAssert       func(result int)
+		givenArgs        []string
+		givenOrgFileName string
+	}{
+		"should return success for valid key value": {
+			givenOrgFileName: "testdata/org_test.json",
+			givenArgs:        []string{"id", "1"},
+			thenAssert: func(result int) {
+				require.Equal(t, result, 0)
+
+			},
+		},
+		"should return help code when no arguments are passed": {
+			givenOrgFileName: "testdata/org_test.json",
+			givenArgs:        []string{},
+			thenAssert: func(result int) {
+				require.Equal(t, result, -18511)
+
+			},
+		},
+		"should return help code when only 1 argument is passed": {
+			givenOrgFileName: "testdata/org_test.json",
+			givenArgs:        []string{},
+			thenAssert: func(result int) {
+				require.Equal(t, result, -18511)
+
+			},
+		},
+		"should return success and ignore extra arguments": {
+			givenOrgFileName: "testdata/org_test.json",
+			givenArgs:        []string{"id", "1"},
+			thenAssert: func(result int) {
+				require.Equal(t, result, 0)
+
+			},
+		},
+		"should return -1 for invalid org file": {
+			givenOrgFileName: "testdata/org.json",
+			givenArgs:        []string{"id", "1"},
+			thenAssert: func(result int) {
+				require.Equal(t, result, -1)
+
+			},
+		},
+	}
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			orgSearch := NewOrgSearch(test.givenOrgFileName)
+			result := orgSearch.Run(test.givenArgs)
+			test.thenAssert(result)
+		})
+	}
+}

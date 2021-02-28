@@ -168,3 +168,91 @@ func Test_TicketSearch(t *testing.T) {
 		})
 	}
 }
+
+func Test_TicketCommands(t *testing.T) {
+	tests := map[string]struct {
+		thenAssert        func(result int)
+		givenArgs         []string
+		givenUserFileName string
+		givenOrgFileName  string
+		givenTktFileName  string
+	}{
+		"should return success for valid key value": {
+			givenUserFileName: "testdata/user_test.json",
+			givenOrgFileName:  "testdata/org_test.json",
+			givenTktFileName:  "testdata/ticket_test.json",
+			givenArgs:         []string{"id", "1"},
+			thenAssert: func(result int) {
+				require.Equal(t, result, 0)
+
+			},
+		},
+		"should return help code when no arguments are passed": {
+			givenUserFileName: "testdata/user_test.json",
+			givenOrgFileName:  "testdata/org_test.json",
+			givenTktFileName:  "testdata/ticket_test.json",
+			givenArgs:         []string{},
+			thenAssert: func(result int) {
+				require.Equal(t, result, -18511)
+
+			},
+		},
+		"should return help code when only 1 argument is passed": {
+			givenUserFileName: "testdata/user_test.json",
+			givenOrgFileName:  "testdata/org_test.json",
+			givenTktFileName:  "testdata/ticket_test.json",
+			givenArgs:         []string{},
+			thenAssert: func(result int) {
+				require.Equal(t, result, -18511)
+
+			},
+		},
+		"should return success and ignore extra arguments": {
+			givenUserFileName: "testdata/user_test.json",
+			givenOrgFileName:  "testdata/org_test.json",
+			givenTktFileName:  "testdata/ticket_test.json",
+			givenArgs:         []string{"id", "1", "abc"},
+			thenAssert: func(result int) {
+				require.Equal(t, result, 0)
+
+			},
+		},
+		"should return -1 for invalid user file": {
+			givenUserFileName: "testdata/user.json",
+			givenOrgFileName:  "testdata/org_test.json",
+			givenTktFileName:  "testdata/ticket_test.json",
+			givenArgs:         []string{"id", "1"},
+			thenAssert: func(result int) {
+				require.Equal(t, result, -1)
+
+			},
+		},
+		"should return -1 for invalid org file": {
+			givenUserFileName: "testdata/user_test.json",
+			givenOrgFileName:  "testdata/org.json",
+			givenTktFileName:  "testdata/ticket_test.json",
+			givenArgs:         []string{"id", "1"},
+			thenAssert: func(result int) {
+				require.Equal(t, result, -1)
+
+			},
+		},
+		"should return -1 for invalid ticket file": {
+			givenUserFileName: "testdata/user_test.json",
+			givenOrgFileName:  "testdata/org_test.json",
+			givenTktFileName:  "testdata/ticket.json",
+			givenArgs:         []string{"id", "1"},
+			thenAssert: func(result int) {
+				require.Equal(t, result, -1)
+
+			},
+		},
+	}
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			tktsearch := NewTicketSearch(test.givenTktFileName, test.givenUserFileName, test.givenOrgFileName)
+			result := tktsearch.Run(test.givenArgs)
+			test.thenAssert(result)
+		})
+	}
+}

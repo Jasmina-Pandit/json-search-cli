@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/fatih/structs"
+	"github.com/sirupsen/logrus"
 	"json-search-cli/helper"
 	"json-search-cli/model"
 	"json-search-cli/reader"
@@ -66,17 +67,24 @@ func (o *OrgSearch) Run(args []string) int {
 	if len(args) < 2 {
 		return -18511 //return help as per cli doco
 	}
-	o.Initialise()
+	err := o.Initialise()
+	if err != nil {
+		return -1
+	}
 	o.searchOrg(args[0], args[1])
 
 	return 0
 }
 
-func (o *OrgSearch) Initialise() {
+func (o *OrgSearch) Initialise() error {
 	o.orgs = loadOrgs(o.orgfileName)
+	if len(o.orgs) == 0 {
+		logrus.Error("No organisations found")
+		return errors.New("no organisations found. check reference organisation json file")
+	}
 	o.orgKeys = structs.Names(&model.Organisation{})
 	o.keysOfTypeArray = append(append(o.keysOfTypeArray, "tags"), "domainnames")
-
+	return nil
 }
 
 func (o *OrgSearch) Synopsis() string {

@@ -94,18 +94,34 @@ func (t *TicketSearch) Run(args []string) int {
 	if len(args) < 2 {
 		return -18511 //return help as per cli doco
 	}
-	t.Initialise()
+	err := t.Initialise()
+	if err != nil {
+		return -1
+	}
 	t.searchTicket(args[0], args[1])
 
 	return 0
 }
-func (t *TicketSearch) Initialise() {
+func (t *TicketSearch) Initialise() error {
 	t.userSearch = NewUserSearch(t.userFileName, t.orgFileName)
 	t.userSearch.Initialise()
+	if len(t.userSearch.users) == 0 {
+		logrus.Error("No users found")
+		return errors.New("no user found. check reference users json file")
+	}
 	t.orgSearch = NewOrgSearch(t.orgFileName)
 	t.orgSearch.Initialise()
+	if len(t.orgSearch.orgs) == 0 {
+		logrus.Error("No organisations found")
+		return errors.New("no organisations found. check reference organisation json file")
+	}
 	t.tickets = loadTickets(t.tktFileName)
+	if len(t.tickets) == 0 {
+		logrus.Error("No tickets found")
+		return errors.New("no tickets found. check reference tickets json file")
+	}
 	t.keysOfTypeArray = append(t.keysOfTypeArray, "tags")
+	return nil
 }
 
 func (t *TicketSearch) Synopsis() string {

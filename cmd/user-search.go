@@ -124,17 +124,28 @@ func (u *UserSearch) Run(args []string) int {
 	if len(args) < 2 {
 		return -18511 //return help as per cli doco
 	}
-	u.Initialise()
+	err := u.Initialise()
+	if err != nil {
+		return -1
+	}
 	u.searchUser(args[0], args[1])
 	return 0
 }
 
-func (u *UserSearch) Initialise() {
+func (u *UserSearch) Initialise() error {
 	u.orgSearch = NewOrgSearch(u.orgFileName)
 	u.orgSearch.Initialise()
+	if len(u.orgSearch.orgs) == 0 {
+		logrus.Error("No organisations found")
+		return errors.New("no organisations found. check reference organisation json file")
+	}
 	u.users = loadUser(u.userFileName)
+	if len(u.users) == 0 {
+		logrus.Error("No users found")
+		return errors.New("no users found. check reference users json file")
+	}
 	u.keysOfTypeArray = append(u.keysOfTypeArray, "tags")
-
+	return nil
 }
 
 func (u *UserSearch) Synopsis() string {
