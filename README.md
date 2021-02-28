@@ -5,10 +5,9 @@ A simple CLI search on JSON files for User, Organisation and Tickets.
 ----
 
 ####
-The program uses the below library for command-line implementation
-    github.com/mitchellh/cli v1.1.2
+The program uses a cli library for command-line implementation - github.com/mitchellh/cli v1.1.2
 The search is performed using GO reflection library to search by struct field names.
-The dependent libraries are vendored and checked in the repository
+The dependent libraries are vendored and checked into the repository.
 Search keys are case insensitive also underscores are ignored, e.g id, ID, _id are treated the same.
 
 
@@ -23,13 +22,13 @@ Search keys are case insensitive also underscores are ignored, e.g id, ID, _id a
 
 ###### Steps
 - 1 Build
+    ```bash
     go build search.go
+    ```
 
 - 2 Help command
 ```bash
 ./search help
-OR
-./search
 
     search-org          Search Organisation using the search key and field. Key and value are case and underscore agnostic
                         Syntax search-org <key> <value>
@@ -54,7 +53,7 @@ make test
 ```
 ___
 
-###Docker Run
+#### Docker Run
 1. Builder docker image
    docker build -t search-app .
 2. Run help
